@@ -17,6 +17,7 @@ export default function Navbar() {
     { label: 'Residences', href: '#residences' },
     { label: 'Amenities', href: '#amenities' },
     { label: 'Location', href: '#location' },
+    { label: 'FAQ', href: '#faq' },
   ]
 
   const scrollTo = (href: string) => {
@@ -24,7 +25,14 @@ export default function Navbar() {
     document.querySelector(href)?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  // Lock background scroll while the mobile menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
   return (
+    <>
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
         scrolled
@@ -79,33 +87,47 @@ export default function Navbar() {
         </button>
 
       </div>
-
-      {/* Mobile Menu */}
-      <div 
-        className={`fixed inset-0 bg-charcoal z-40 transition-transform duration-500 flex flex-col justify-center items-center gap-8 ${
-          menuOpen ? 'translate-x-0' : 'translate-x-full'
-        } lg:hidden`}
-      >
-        {navLinks.map((link) => (
-          <button
-            key={link.href}
-            onClick={() => scrollTo(link.href)}
-            className="font-serif text-3xl text-ivory hover:text-bronze-light transition-colors"
-          >
-            {link.label}
-          </button>
-        ))}
-        <div className="w-12 h-px bg-bronze/30 my-4" />
-        <button 
-          className="btn-bronze"
-          onClick={() => {
-            setMenuOpen(false)
-            document.getElementById('enquire-modal')?.classList.remove('hidden')
-          }}
-        >
-          ENQUIRE NOW
-        </button>
-      </div>
     </header>
+
+    {/* Mobile Menu — kept as a sibling of <header> so the header's
+        backdrop-filter (applied when scrolled) doesn't trap this fixed
+        overlay inside the top bar and let the page bleed through. */}
+    <div
+      className={`fixed inset-0 bg-charcoal z-[60] transition-transform duration-500 flex flex-col justify-center items-center gap-8 ${
+        menuOpen ? 'translate-x-0' : 'translate-x-full'
+      } lg:hidden`}
+    >
+      {/* Close */}
+      <button
+        onClick={() => setMenuOpen(false)}
+        aria-label="Close menu"
+        className="absolute top-8 right-6 w-10 h-10 flex items-center justify-center text-ivory/60 hover:text-bronze-light transition-colors"
+      >
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+          <path d="M1 1l18 18M19 1L1 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      {navLinks.map((link) => (
+        <button
+          key={link.href}
+          onClick={() => scrollTo(link.href)}
+          className="font-serif text-3xl text-ivory hover:text-bronze-light transition-colors"
+        >
+          {link.label}
+        </button>
+      ))}
+      <div className="w-12 h-px bg-bronze/30 my-4" />
+      <button
+        className="btn-bronze"
+        onClick={() => {
+          setMenuOpen(false)
+          document.getElementById('enquire-modal')?.classList.remove('hidden')
+        }}
+      >
+        ENQUIRE NOW
+      </button>
+    </div>
+    </>
   )
 }
