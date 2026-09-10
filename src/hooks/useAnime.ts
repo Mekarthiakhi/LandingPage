@@ -17,7 +17,7 @@ export function useSplitTextReveal(
   }
 ) {
   const prefersReduced = useReducedMotion()
-  const observed = useRef(false)
+  const played = useRef(false)
   const delay = options?.delay ?? 0
   const staggerVal = options?.stagger ?? 28
   const duration = options?.duration ?? 900
@@ -26,11 +26,13 @@ export function useSplitTextReveal(
 
   useEffect(() => {
     const container = containerRef.current
-    if (!container || observed.current) return
+    if (!container) return
 
-    // Wrap each letter in a span
+    // Wrap each letter in a span — idempotent so React StrictMode's
+    // double-invoke (or any re-render) never re-splits or clobbers it.
     const elements = container.querySelectorAll<HTMLElement>('[data-split]')
     elements.forEach(el => {
+      if (el.dataset.splitDone) return
       const text = el.textContent ?? ''
       el.innerHTML = text
         .split('')
@@ -40,11 +42,15 @@ export function useSplitTextReveal(
             : `<span class="split-char" style="display:inline-block; opacity:0; transform:translateY(60px)">${char}</span>`
         )
         .join('')
+      el.dataset.splitDone = 'true'
     })
 
     const chars = container.querySelectorAll<HTMLElement>('.split-char')
 
     const runAnimation = () => {
+      if (played.current) return
+      played.current = true
+
       if (prefersReduced) {
         chars.forEach(c => {
           c.style.opacity = '1'
@@ -64,20 +70,23 @@ export function useSplitTextReveal(
 
     if (!scrollTrigger) {
       runAnimation()
-    } else {
-      observed.current = true
-      const observer = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) {
-            runAnimation()
-            observer.disconnect()
-          }
-        },
-        { threshold: 0.1, rootMargin: triggerOffset }
-      )
-      observer.observe(container)
-      return () => observer.disconnect()
+      return
     }
+
+    // Always (re)create the observer on each effect run. The previous guard
+    // set a flag *before* the observer could fire and bailed out on
+    // StrictMode's second mount, leaving the title stuck at opacity 0.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          runAnimation()
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.1, rootMargin: triggerOffset }
+    )
+    observer.observe(container)
+    return () => observer.disconnect()
   }, [containerRef, prefersReduced, delay, staggerVal, duration, scrollTrigger, triggerOffset])
 }
 

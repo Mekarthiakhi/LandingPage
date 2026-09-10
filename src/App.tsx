@@ -12,8 +12,10 @@ import ResidenceSelector from './components/ResidenceSelector'
 import AmenitiesSection from './components/AmenitiesSection'
 import GreensSection from './components/GreensSection'
 import LocationSection from './components/LocationSection'
+import FAQSection from './components/FAQSection'
 import CTASection from './components/CTASection'
 import Footer from './components/Footer'
+import MobileCTABar from './components/MobileCTABar'
 
 function App() {
   useLenis()
@@ -38,10 +40,14 @@ function App() {
         <AmenitiesSection />
         <GreensSection />
         <LocationSection />
+        <FAQSection />
         <CTASection />
       </main>
 
       <Footer />
+
+      {/* Sticky mobile call/WhatsApp bar */}
+      <MobileCTABar />
     </>
   )
 }

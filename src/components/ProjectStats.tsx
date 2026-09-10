@@ -8,9 +8,10 @@ gsap.registerPlugin(ScrollTrigger)
 const stats = [
   { label: 'ACRES OF LUXURY', value: 4.75, suffix: '' },
   { label: 'SOARING TOWERS', value: 2, suffix: '' },
-  { label: 'LEVELS', value: 55, suffix: '' },
+  { label: 'FLOORS', value: 55, suffix: '' },
+  { label: 'FLATS PER FLOOR', value: 4, suffix: '' },
   { label: 'EXCLUSIVE RESIDENCES', value: 425, suffix: '' },
-  { label: 'OPEN SPACES', value: 79, suffix: '%' },
+  { label: 'OPEN SPACE', value: 79, suffix: '%' },
 ]
 
 export default function ProjectStats() {
@@ -55,7 +56,7 @@ export default function ProjectStats() {
       className="bg-charcoal section-py border-b border-[rgba(154,123,79,0.1)]"
     >
       <div className="container-site">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-12 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-12 lg:gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="stat-item flex flex-col gap-4">
               <div className="h-px w-8 bg-bronze/40 mb-2" />

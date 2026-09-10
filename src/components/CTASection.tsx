@@ -1,5 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { useSplitTextReveal, useStaggerReveal } from '../hooks/useAnime'
+import { PHONE_DISPLAY, PHONE_TEL, whatsappLink } from '../config'
+import { trackEvent } from '../lib/analytics'
 
 export default function CTASection() {
   const sectionRef = useRef<HTMLElement>(null)
@@ -25,6 +27,21 @@ export default function CTASection() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+
+    const message =
+      `Hi, I'm interested in Jayabheri The Pinnacle.\n\n` +
+      `Name: ${formData.name}\n` +
+      `Email: ${formData.email}\n` +
+      `Phone: ${formData.phone}\n` +
+      `Configuration: ${formData.interest || 'Not specified'}`
+
+    // Fire a conversion event, then hand the lead to WhatsApp.
+    trackEvent('generate_lead', {
+      method: 'whatsapp',
+      configuration: formData.interest || 'unspecified',
+    })
+    window.open(whatsappLink(message), '_blank', 'noopener,noreferrer')
+
     setSubmitted(true)
   }
 
@@ -59,8 +76,12 @@ export default function CTASection() {
           </div>
 
           <div className="cta-fade mt-16">
-            <a href="tel:7304001234" className="font-sans text-xs tracking-[0.2em] text-ivory/40 hover:text-bronze-light transition-colors">
-              OR CALL 73040 01234
+            <a
+              href={`tel:${PHONE_TEL}`}
+              onClick={() => trackEvent('contact_call', { location: 'cta_section' })}
+              className="font-sans text-xs tracking-[0.2em] text-ivory/40 hover:text-bronze-light transition-colors"
+            >
+              OR CALL {PHONE_DISPLAY}
             </a>
           </div>
         </div>
@@ -187,6 +208,9 @@ export default function CTASection() {
               >
                 SUBMIT PRIVATE ENQUIRY
               </button>
+              <p className="font-sans text-[10px] tracking-[0.1em] text-ivory/35 text-center -mt-1">
+                Opens WhatsApp to send your enquiry to our sales team.
+              </p>
             </form>
           )}
         </div>
