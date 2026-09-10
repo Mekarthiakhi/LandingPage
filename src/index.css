@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+@theme {
+  --color-charcoal: #141412;
+  --color-charcoal-mid: #1e1e1b;
+  --color-charcoal-light: #282822;
+  --color-stone: #3d3932;
+  --color-ivory: #f2ede4;
+  --color-warm-white: #f8f4ed;
+  --color-cream: #ede6d8;
+  --color-bronze: #9a7b4f;
+  --color-bronze-light: #c9a96e;
+  --color-bronze-dark: #7a5f3a;
+  --color-bronze-glow: rgba(201,169,110,0.12);
+
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+
+  /* Section spacing — very generous */
+  --section-pad-y: 8rem;
+  --section-pad-x: 6rem;
+  --container-max: 1440px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: auto;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-charcoal);
+  color: var(--color-ivory);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+img { display: block; max-width: 100%; }
+
+/* Cursor */
+body.has-cursor * { cursor: none !important; }
+
+/* Lenis */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* Selection */
+::selection {
+  background: var(--color-bronze);
+  color: var(--color-charcoal);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--color-charcoal); }
+::-webkit-scrollbar-thumb { background: var(--color-bronze-dark); border-radius: 2px; }
+
+/* ── Shared layout utilities ── */
+.container-site {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+@media (min-width: 768px) {
+  .container-site {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-site {
+    padding-left: 7rem;
+    padding-right: 7rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container-site {
+    padding-left: 9rem;
+    padding-right: 9rem;
+  }
+}
+
+/* Section vertical rhythm & scroll anchor offset */
+section[id] {
+  scroll-margin-top: 6rem;
+}
+
+@media (min-width: 1024px) {
+  section[id] {
+    scroll-margin-top: 7.5rem;
+  }
+}
+
+.section-py {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+@media (min-width: 1024px) {
+  .section-py {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
+  }
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modalFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ── Label chip ── */
+.section-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  font-family: var(--font-sans);
+  font-size: 0.625rem;
+  letter-spacing: 0.4em;
+  font-weight: 400;
+  color: var(--color-bronze);
+  text-transform: uppercase;
+}
+
+.section-label::before {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 1px;
+  background: var(--color-bronze);
+  flex-shrink: 0;
+}
+
+/* ── Split text (anime.js) ── */
+.split-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  line-height: 1.05;
+}
+
+.split-char {
+  display: inline-block;
+}
+
+/* ── Divider ── */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(154,123,79,0.15);
+}
+
+/* ── Button styles ── */
+.btn-bronze {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  font-weight: 400;
+  text-transform: uppercase;
+  padding: 1.1rem 2.5rem;
+  background: var(--color-bronze);
+  color: var(--color-charcoal);
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+.btn-bronze:hover { background: var(--color-bronze-light); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  font-weight: 400;
+  text-transform: uppercase;
+  padding: 1.1rem 2.5rem;
+  background: transparent;
+  color: rgba(242,237,228,0.75);
+  border: 1px solid rgba(242,237,228,0.2);
+  cursor: pointer;
+  transition: border-color 0.3s ease, color 0.3s ease;
+}
+.btn-outline:hover {
+  border-color: var(--color-bronze);
+  color: var(--color-bronze-light);
+}
+
+/* ── Horizontal rule ── */
+.hr-bronze { border: none; border-top: 1px solid rgba(154,123,79,0.18); }
+
+/* ── Scroll progress ── */
+#scroll-progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(to right, var(--color-bronze-dark), var(--color-bronze-light));
+  z-index: 9999;
+  transform-origin: left;
+  pointer-events: none;
+}
+
+/* ── Anime.js inspired stagger list ── */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .split-char, .stagger-item {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
