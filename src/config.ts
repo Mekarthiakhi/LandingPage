@@ -1,10 +1,9 @@
 // ── Central contact + tracking config — edit these in ONE place ──
 
-// Primary phone / WhatsApp number.
-// NOTE: as provided this is 9 digits ("734723445"). Indian mobile numbers are
-// normally 10 digits — if a digit is missing, just fix PHONE_LOCAL below and
-// every link (call, WhatsApp, footer, schema) updates automatically.
-export const PHONE_LOCAL = '734723445'
+// Primary phone / WhatsApp number (10-digit Indian mobile).
+// Change this one value and every link (call, WhatsApp, footer, schema)
+// updates automatically.
+export const PHONE_LOCAL = '7347234445'
 export const COUNTRY_CODE = '91' // India
 
 export const PHONE_DISPLAY = `+${COUNTRY_CODE} ${PHONE_LOCAL}`
