@@ -240,11 +240,25 @@ export default function Hero() {
           </span>
         </div>
 
-        {/* CTA Row */}
+        {/* Pricing line */}
         <div
           ref={ctaRef}
-          className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6"
+          className="flex flex-col gap-6"
           style={{ opacity: 0 }}
+        >
+          <div className="flex items-center gap-3 flex-wrap">
+            <span className="w-8 h-px bg-bronze/60" />
+            <p className="font-sans text-xs sm:text-sm tracking-[0.12em] text-ivory/75 font-light">
+              Premium <span className="text-bronze-light">3.5 &amp; 4.5 BHK</span> in Kokapet
+              <span className="hidden sm:inline text-ivory/30"> · </span>
+              <br className="sm:hidden" />
+              Starting <span className="text-bronze-light font-normal">₹5.25 Cr*</span>
+            </p>
+          </div>
+
+        {/* CTA Row */}
+        <div
+          className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6"
         >
           <button
             onClick={scrollDown}
@@ -276,6 +290,7 @@ export default function Hero() {
           >
             ENQUIRE NOW
           </button>
+          </div>
         </div>
       </div>
 

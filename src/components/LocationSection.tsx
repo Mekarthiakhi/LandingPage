@@ -5,12 +5,48 @@ import { useSplitTextReveal, useStaggerReveal } from '../hooks/useAnime'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const landmarks = [
-  { name: 'Financial District', time: '5 MINS', desc: 'Major IT hubs and corporate offices' },
-  { name: 'Neopolis', time: '2 MINS', desc: 'Upcoming commercial center' },
-  { name: 'ORR Entry', time: '3 MINS', desc: 'Seamless connectivity across city' },
-  { name: 'Airport', time: '30 MINS', desc: 'Rajiv Gandhi International Airport' },
-  { name: 'Gachibowli', time: '15 MINS', desc: 'Premium lifestyle and retail' },
+const locationGroups = [
+  {
+    title: 'Access & Connectivity',
+    places: [
+      { name: 'Narsingi', time: '9 min' },
+      { name: 'Financial District', time: '9 min' },
+      { name: 'Nanakramguda', time: '10 min' },
+      { name: 'Gachibowli', time: '14 min' },
+      { name: 'Hitech City', time: '20 min' },
+      { name: 'Airport', time: '30 min' },
+    ],
+  },
+  {
+    title: 'IT Hubs & Corporates',
+    places: [
+      { name: 'TCS', time: '18 min' },
+      { name: 'Wipro Corporate Office', time: '20 min' },
+      { name: 'WaveRock IT Park', time: '20 min' },
+      { name: 'Infosys Campus', time: '25 min' },
+      { name: 'Microsoft IDC', time: '25 min' },
+    ],
+  },
+  {
+    title: 'Healthcare',
+    places: [
+      { name: 'Sankara Eye Hospital', time: '4 min' },
+      { name: 'Continental Hospitals', time: '10 min' },
+      { name: 'Star & Rainbow Hospitals', time: '10 min' },
+      { name: 'Ankura Hospitals', time: '12 min' },
+      { name: 'CARE Hospitals', time: '15 min' },
+    ],
+  },
+  {
+    title: 'Education',
+    places: [
+      { name: 'Sattva Academy', time: '2 min' },
+      { name: 'Phoenix Greens', time: '5 min' },
+      { name: 'Global Edge School', time: '6 min' },
+      { name: 'Rockwell International', time: '7 min' },
+      { name: 'DPS & Oakridge Intl.', time: '15 min' },
+    ],
+  },
 ]
 
 export default function LocationSection() {
@@ -43,34 +79,24 @@ export default function LocationSection() {
   return (
     <section id="location" ref={sectionRef} className="bg-charcoal section-py">
       <div className="container-site">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-24 items-center">
-          
-          {/* Text Content */}
-          <div className="lg:col-span-5">
-            <span className="section-label">THE LOCATION</span>
-            <h2 ref={titleRef} className="font-serif text-5xl lg:text-[4rem] leading-[1.1] text-ivory mb-12">
-              <span data-split>The Center</span><br />
-              <span data-split className="italic text-bronze-light">of it All</span>
-            </h2>
+        {/* Header */}
+        <div className="mb-14 lg:mb-20 max-w-2xl">
+          <span className="section-label">THE LOCATION</span>
+          <h2 ref={titleRef} className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.1] text-ivory">
+            <span data-split>The Center</span>{' '}
+            <span data-split className="italic text-bronze-light">of it All</span>
+          </h2>
+          <p className="font-sans text-sm lg:text-base font-light text-ivory/55 mt-6 leading-relaxed">
+            Set in the heart of Kokapet, moments from the Financial District and the Outer Ring Road —
+            the city's business, wellness and learning hubs are all within easy reach.
+          </p>
+        </div>
 
-            <div className="flex flex-col gap-8">
-              {landmarks.map((mark, i) => (
-                <div key={i} className="loc-item flex items-start justify-between border-b border-[rgba(154,123,79,0.15)] pb-6">
-                  <div className="flex flex-col gap-1">
-                    <span className="font-serif text-2xl text-ivory/90">{mark.name}</span>
-                    <span className="font-sans text-[11px] text-ivory/50 font-light">{mark.desc}</span>
-                  </div>
-                  <span className="font-sans text-[10px] tracking-[0.2em] text-bronze-light mt-1">
-                    {mark.time}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-20 items-start">
 
           {/* Map / Illustration */}
-          <div className="lg:col-span-7 loc-item">
-            <div className="relative w-full aspect-square md:aspect-[4/3] border border-[rgba(154,123,79,0.15)] bg-charcoal-light flex items-center justify-center p-8 lg:p-12">
+          <div className="lg:col-span-5 loc-item lg:sticky lg:top-28">
+            <div className="relative w-full aspect-square md:aspect-[4/3] lg:aspect-square border border-[rgba(154,123,79,0.15)] bg-charcoal-light flex items-center justify-center p-8 lg:p-10">
               
               <svg ref={svgRef} viewBox="0 0 400 400" className="w-full h-full max-w-[400px]" fill="none">
                 {/* Background grid/map lines */}
@@ -97,9 +123,41 @@ export default function LocationSection() {
                 <text x="260" y="45" fill="rgba(242,237,228,0.5)" fontSize="10" fontFamily="DM Sans" letterSpacing="0.1em">FINANCIAL DIST.</text>
               </svg>
 
+              <span className="absolute bottom-5 left-6 font-sans text-[10px] tracking-[0.25em] text-ivory/40 uppercase">
+                Kokapet · Hyderabad
+              </span>
             </div>
           </div>
-          
+
+          {/* Connectivity categories */}
+          <div className="lg:col-span-7">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-10 lg:gap-y-12">
+              {locationGroups.map(group => (
+                <div key={group.title} className="loc-item">
+                  <div className="flex items-center gap-3 mb-5">
+                    <span className="w-6 h-px bg-bronze" />
+                    <h3 className="font-sans text-[11px] tracking-[0.25em] text-bronze-light uppercase font-medium">
+                      {group.title}
+                    </h3>
+                  </div>
+                  <ul className="flex flex-col gap-3">
+                    {group.places.map(place => (
+                      <li
+                        key={place.name}
+                        className="flex items-baseline justify-between gap-4 border-b border-[rgba(154,123,79,0.12)] pb-3"
+                      >
+                        <span className="font-serif text-lg text-ivory/85">{place.name}</span>
+                        <span className="font-sans text-[10px] tracking-[0.18em] text-bronze-light/90 whitespace-nowrap">
+                          {place.time}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

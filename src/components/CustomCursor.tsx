@@ -71,7 +71,7 @@ export default function CustomCursor() {
     <>
       <div
         ref={dotRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2"
+        className="fixed top-0 left-0 pointer-events-none z-[10001] -translate-x-1/2 -translate-y-1/2"
         style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s' }}
       >
         <div
@@ -85,7 +85,7 @@ export default function CustomCursor() {
       </div>
       <div
         ref={ringRef}
-        className="fixed top-0 left-0 pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2"
+        className="fixed top-0 left-0 pointer-events-none z-[10001] -translate-x-1/2 -translate-y-1/2"
         style={{ opacity: isVisible ? 1 : 0, transition: 'opacity 0.3s' }}
       >
         <div

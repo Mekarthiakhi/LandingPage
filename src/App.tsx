@@ -12,6 +12,7 @@ import ResidenceSelector from './components/ResidenceSelector'
 import AmenitiesSection from './components/AmenitiesSection'
 import GreensSection from './components/GreensSection'
 import LocationSection from './components/LocationSection'
+import FAQSection from './components/FAQSection'
 import CTASection from './components/CTASection'
 import Footer from './components/Footer'
 
@@ -38,6 +39,7 @@ function App() {
         <AmenitiesSection />
         <GreensSection />
         <LocationSection />
+        <FAQSection />
         <CTASection />
       </main>
 

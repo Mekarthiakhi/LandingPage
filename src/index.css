@@ -24,9 +24,17 @@
 
 *, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }
+
+/*
+ * NOTE: Do not add a blanket `* { margin: 0; padding: 0; }` reset here.
+ * Tailwind v4 emits its utilities inside `@layer utilities`, and unlayered
+ * CSS always wins over layered CSS regardless of specificity — so an
+ * unlayered universal margin/padding reset silently kills every `m-*`,
+ * `p-*`, `mb-*`, `px-*` … utility on the site. Tailwind's own Preflight
+ * already zeroes element margins/padding in the (layered) base layer, so
+ * utilities keep working.
+ */
 
 html {
   font-size: 16px;

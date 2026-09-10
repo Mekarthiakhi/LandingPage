@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 import { gsap } from 'gsap'
 import { useSplitTextReveal, useStaggerReveal } from '../hooks/useAnime'
 
@@ -7,6 +7,7 @@ const residences = [
     id: '2bhk',
     title: '2 BHK Residences',
     area: '2,692 sq ft',
+    price: 'Price on Request',
     desc: 'Perfectly proportioned luxury living spaces featuring open-plan layouts, expansive windows, and premium finishes for the discerning urbanite.',
     features: ['Expansive Living', 'Designer Kitchen', 'En-suite Baths', 'Powder Room'],
     image: '/interior.png'
@@ -15,15 +16,17 @@ const residences = [
     id: '35bhk',
     title: '3.5 BHK Residences',
     area: '3,587–3,678 sq ft',
-    desc: 'Spacious family homes where every detail has been considered. Featuring a dedicated study, grand living areas, and wrap-around balconies.',
-    features: ['Wrap-around Balcony', 'Home Office/Study', 'Staff Quarters', 'Walk-in Wardrobes'],
+    price: '₹5.25 Cr onwards*',
+    desc: 'Spacious family homes where every detail has been considered. Featuring a dedicated study, separate domestic help’s quarters, grand living areas, and wrap-around balconies.',
+    features: ['Wrap-around Balcony', 'Home Office/Study', 'Help’s Quarters', 'Walk-in Wardrobes'],
     image: '/balcony.png'
   },
   {
     id: '45bhk',
     title: '4.5 BHK Residences',
     area: '4,545–4,622 sq ft',
-    desc: 'The pinnacle of luxury. Palatial dimensions, multiple living zones, and unobstructed 270-degree views of the Hyderabad skyline.',
+    price: '₹6.5 Cr onwards*',
+    desc: 'The pinnacle of luxury. Palatial dimensions, multiple living zones, separate help’s quarters, and unobstructed panoramic views of the Outer Ring Road.',
     features: ['Private Elevator Lobby', 'Dual Kitchens', 'Home Theatre Room', 'Grand Master Suite'],
     image: '/towers.png'
   }
@@ -37,6 +40,20 @@ export default function ResidenceSelector() {
   const titleRef = useRef<HTMLHeadingElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   const contentRef = useRef<HTMLDivElement>(null)
+
+  // Sliding pill indicator — glides between tabs on selection
+  const btnRefs = useRef<Record<string, HTMLButtonElement | null>>({})
+  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null)
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = btnRefs.current[activeId]
+      if (el) setIndicator({ left: el.offsetLeft, width: el.offsetWidth })
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
+  }, [activeId])
 
   // Initial scroll reveal
   useSplitTextReveal(titleRef, { scrollTrigger: true })
@@ -71,15 +88,26 @@ export default function ResidenceSelector() {
 
         {/* Tab Selector — Luxury Pill Bar */}
         <div className="res-elem flex justify-center mb-16 lg:mb-20">
-          <div className="inline-flex p-1.5 bg-[#1a1a18]/90 border border-bronze/25 rounded-full shadow-xl backdrop-blur-md gap-2">
+          <div className="relative inline-flex p-1.5 bg-[#1a1a18]/90 border border-bronze/25 rounded-full shadow-xl backdrop-blur-md gap-2">
+            {/* Sliding active indicator */}
+            <span
+              aria-hidden
+              className="absolute top-1.5 bottom-1.5 rounded-full bg-bronze shadow-md shadow-bronze/30 transition-[left,width] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none"
+              style={
+                indicator
+                  ? { left: indicator.left, width: indicator.width, opacity: 1 }
+                  : { opacity: 0 }
+              }
+            />
             {residences.map(res => (
               <button
                 key={res.id}
+                ref={el => { btnRefs.current[res.id] = el }}
                 onClick={() => setActiveId(res.id)}
-                className={`font-sans text-[11px] lg:text-xs tracking-[0.22em] px-6 py-3 rounded-full transition-all duration-300 uppercase cursor-pointer ${
-                  activeId === res.id 
-                    ? 'bg-bronze text-charcoal font-medium shadow-md shadow-bronze/30 scale-[1.02]' 
-                    : 'text-ivory/60 hover:text-ivory hover:bg-white/[0.04]'
+                className={`relative z-10 font-sans text-[11px] lg:text-xs tracking-[0.22em] px-6 py-3 rounded-full transition-colors duration-300 uppercase cursor-pointer ${
+                  activeId === res.id
+                    ? 'text-charcoal font-medium'
+                    : 'text-ivory/60 hover:text-ivory'
                 }`}
                 data-magnetic
               >
@@ -104,10 +132,18 @@ export default function ResidenceSelector() {
             </div>
             
             {/* Residence Title */}
-            <h3 className="font-serif text-4xl sm:text-5xl lg:text-[3.25rem] text-ivory mb-6 tracking-wide leading-tight">
+            <h3 className="font-serif text-4xl sm:text-5xl lg:text-[3.25rem] text-ivory mb-4 tracking-wide leading-tight">
               {activeRes.title}
             </h3>
-            
+
+            {/* Price */}
+            <div className="flex items-center gap-3 mb-6">
+              <span className="w-6 h-px bg-bronze" />
+              <span className="font-serif text-2xl lg:text-3xl text-bronze-light">
+                {activeRes.price}
+              </span>
+            </div>
+
             {/* Description */}
             <p className="font-sans text-base lg:text-[1.05rem] font-light leading-relaxed text-ivory/70 mb-8 max-w-xl">
               {activeRes.desc}

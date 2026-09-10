@@ -1,17 +1,26 @@
 import { useState, useRef } from 'react'
 import { useSplitTextReveal, useStaggerReveal } from '../hooks/useAnime'
 
+// Real amenities from Jayabheri The Pinnacle — a 7-level clubhouse plus
+// tower-level community spaces.
 const amenitiesList = [
-  { name: 'INFINITY EDGE POOL', category: 'WELLNESS', image: '/pool.png' },
-  { name: 'STATE-OF-THE-ART GYMNASIUM', category: 'WELLNESS', image: '/interior.png' },
-  { name: 'EXCLUSIVE SPA & SALON', category: 'WELLNESS', image: '/interior.png' },
-  { name: 'PRIVATE SCREENING ROOM', category: 'ENTERTAINMENT', image: '/interior.png' },
-  { name: 'RESIDENTS LOUNGE', category: 'SOCIAL', image: '/balcony.png' },
-  { name: 'BUSINESS CENTER', category: 'PROFESSIONAL', image: '/interior.png' },
-  { name: 'SQUASH COURT', category: 'SPORTS', image: '/interior.png' },
-  { name: 'FINE DINING RESTAURANT', category: 'SOCIAL', image: '/interior.png' },
-  { name: 'CHILDREN’S PLAY AREA', category: 'RECREATION', image: '/greens.png' },
-  { name: 'LANDSCAPED GARDENS', category: 'NATURE', image: '/greens.png' },
+  { name: 'INFINITY POOL', category: 'THE CLUB', image: '/pool.png' },
+  { name: 'SPA', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'GYMNASIUM', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'YOGA STUDIO', category: 'THE CLUB', image: '/greens.png' },
+  { name: 'MINI THEATRE', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'INDOOR GAMES', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'SPORTS ZONE', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'PARTY AREA', category: 'THE CLUB', image: '/balcony.png' },
+  { name: 'CAFETERIA & LOUNGE', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'GUEST ROOMS', category: 'THE CLUB', image: '/interior.png' },
+  { name: 'COWORKING SPACE', category: 'TOWER', image: '/interior.png' },
+  { name: 'CONFERENCE & HUDDLE ROOM', category: 'TOWER', image: '/interior.png' },
+  { name: 'HOBBY ROOM', category: 'TOWER', image: '/balcony.png' },
+  { name: 'TODDLER SPACE', category: 'TOWER', image: '/greens.png' },
+  { name: 'STUDY & TUITION ROOM', category: 'TOWER', image: '/interior.png' },
+  { name: 'ELDERS MEETING SPACE', category: 'TOWER', image: '/balcony.png' },
+  { name: 'COMMUNITY PLAZA', category: 'TOWER', image: '/greens.png' },
 ]
 
 export default function AmenitiesSection() {
@@ -49,6 +58,10 @@ export default function AmenitiesSection() {
             <span data-split>World-Class</span><br/>
             <span data-split className="italic text-bronze-light">Amenities</span>
           </h2>
+          <p className="font-sans text-sm lg:text-base font-light text-ivory/55 mt-6 leading-relaxed">
+            A grand clubhouse configured over seven levels, wrapped in planned greenery and water
+            features — complemented by dedicated community spaces at the tower level.
+          </p>
         </div>
 
         {/* List */}
