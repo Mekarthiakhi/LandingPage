@@ -1,8 +1,12 @@
+import { PHONE_DISPLAY, PHONE_TEL, whatsappLink, WHATSAPP_DEFAULT_MESSAGE } from '../config'
+import { trackEvent } from '../lib/analytics'
+
 const footerLinks = [
   { label: 'The Pinnacle', href: '#story' },
   { label: 'Residences', href: '#residences' },
   { label: 'Amenities', href: '#amenities' },
   { label: 'Location', href: '#location' },
+  { label: 'FAQ', href: '#faq' },
 ]
 
 export default function Footer() {
@@ -49,8 +53,21 @@ export default function Footer() {
           <div>
             <p className="font-sans text-[9px] tracking-[0.35em] mb-6 text-bronze">CONTACT</p>
             <div className="flex flex-col gap-4">
-              <a href="tel:7304001234" className="font-sans text-sm font-light text-ivory/50 hover:text-ivory transition-colors">
-                73040 01234
+              <a
+                href={`tel:${PHONE_TEL}`}
+                onClick={() => trackEvent('contact_call', { location: 'footer' })}
+                className="font-sans text-sm font-light text-ivory/50 hover:text-ivory transition-colors"
+              >
+                {PHONE_DISPLAY}
+              </a>
+              <a
+                href={whatsappLink(WHATSAPP_DEFAULT_MESSAGE)}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => trackEvent('contact_whatsapp', { location: 'footer' })}
+                className="font-sans text-sm font-light text-ivory/50 hover:text-ivory transition-colors"
+              >
+                Chat on WhatsApp
               </a>
               <p className="font-sans text-sm font-light leading-relaxed text-ivory/35">
                 Kokapet, Hyderabad<br />

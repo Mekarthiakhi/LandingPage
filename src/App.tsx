@@ -15,6 +15,7 @@ import LocationSection from './components/LocationSection'
 import FAQSection from './components/FAQSection'
 import CTASection from './components/CTASection'
 import Footer from './components/Footer'
+import MobileCTABar from './components/MobileCTABar'
 
 function App() {
   useLenis()
@@ -44,6 +45,9 @@ function App() {
       </main>
 
       <Footer />
+
+      {/* Sticky mobile call/WhatsApp bar */}
+      <MobileCTABar />
     </>
   )
 }
