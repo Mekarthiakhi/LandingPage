@@ -19,6 +19,17 @@ export function whatsappLink(message: string): string {
 export const WHATSAPP_DEFAULT_MESSAGE =
   "Hi, I'm interested in Jayabheri The Pinnacle. Please share pricing and details."
 
+export const EMAIL_ADDRESS = import.meta.env.VITE_CONTACT_EMAIL || 'akhilesh.medicover@gmail.com'
+export const EMAIL_DISPLAY = EMAIL_ADDRESS
+export const EMAIL_SUBJECT_DEFAULT = 'Enquiry: Jayabheri The Pinnacle Residences'
+
+/** Build a mailto link with pre-filled subject and body */
+export function emailLink(subject = EMAIL_SUBJECT_DEFAULT, body = ''): string {
+  const s = encodeURIComponent(subject)
+  const b = body ? `&body=${encodeURIComponent(body)}` : ''
+  return `mailto:${EMAIL_ADDRESS}?subject=${s}${b}`
+}
+
 // GA4 Measurement ID — replace with your real ID (e.g. 'G-XXXXXXXXXX') in
 // index.html to enable analytics. Events also flow to GTM's dataLayer, so a
 // GTM container works without changing anything here.

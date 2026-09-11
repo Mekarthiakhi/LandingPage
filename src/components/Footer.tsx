@@ -1,4 +1,4 @@
-import { PHONE_DISPLAY, PHONE_TEL, whatsappLink, WHATSAPP_DEFAULT_MESSAGE } from '../config'
+import { PHONE_DISPLAY, PHONE_TEL, whatsappLink, WHATSAPP_DEFAULT_MESSAGE, EMAIL_ADDRESS, EMAIL_DISPLAY } from '../config'
 import { trackEvent } from '../lib/analytics'
 
 const footerLinks = [
@@ -59,6 +59,17 @@ export default function Footer() {
                 className="font-sans text-sm font-light text-ivory/50 hover:text-ivory transition-colors"
               >
                 {PHONE_DISPLAY}
+              </a>
+              <a
+                href={`mailto:${EMAIL_ADDRESS}`}
+                onClick={() => trackEvent('contact_email', { location: 'footer' })}
+                className="font-sans text-sm font-light text-ivory/50 hover:text-bronze-light transition-colors break-all flex items-center gap-2"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="20" height="16" x="2" y="4" rx="2"/>
+                  <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                </svg>
+                {EMAIL_DISPLAY}
               </a>
               <a
                 href={whatsappLink(WHATSAPP_DEFAULT_MESSAGE)}

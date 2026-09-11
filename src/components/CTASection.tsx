@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react'
 import { useSplitTextReveal, useStaggerReveal } from '../hooks/useAnime'
-import { PHONE_DISPLAY, PHONE_TEL, whatsappLink } from '../config'
+import { PHONE_DISPLAY, PHONE_TEL, whatsappLink, EMAIL_ADDRESS, EMAIL_DISPLAY, emailLink } from '../config'
 import { trackEvent } from '../lib/analytics'
 
 export default function CTASection() {
@@ -8,13 +8,20 @@ export default function CTASection() {
   const title1Ref = useRef<HTMLHeadingElement>(null)
   const title2Ref = useRef<HTMLHeadingElement>(null)
   const [submitted, setSubmitted] = useState(false)
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', interest: '' })
+  const [submittedMethod, setSubmittedMethod] = useState<'email' | 'whatsapp'>('email')
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', interest: '', notes: '' })
 
   useSplitTextReveal(title1Ref, { scrollTrigger: true, delay: 0 })
   useSplitTextReveal(title2Ref, { scrollTrigger: true, delay: 200 })
   useStaggerReveal(sectionRef, '.cta-fade', { y: 30, delay: 400 })
 
-  const openModal = () => document.getElementById('enquire-modal')?.classList.remove('hidden')
+  const openModal = () => {
+    setSubmitted(false)
+    setErrorMessage('')
+    document.getElementById('enquire-modal')?.classList.remove('hidden')
+  }
   const closeModal = () => document.getElementById('enquire-modal')?.classList.add('hidden')
 
   useEffect(() => {
@@ -25,23 +32,77 @@ export default function CTASection() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-
-    const message =
+  const buildLeadMessage = () => {
+    return (
       `Hi, I'm interested in Jayabheri The Pinnacle.\n\n` +
       `Name: ${formData.name}\n` +
       `Email: ${formData.email}\n` +
       `Phone: ${formData.phone}\n` +
-      `Configuration: ${formData.interest || 'Not specified'}`
+      `Configuration: ${formData.interest || 'Not specified'}\n` +
+      (formData.notes ? `Notes: ${formData.notes}\n` : '')
+    )
+  }
 
-    // Fire a conversion event, then hand the lead to WhatsApp.
+  // Handle direct Email Submission via SMTP API with automatic Mailto fallback
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.name || !formData.email || !formData.phone) {
+      setErrorMessage('Please provide your name, email, and phone number.')
+      return
+    }
+
+    setIsSubmitting(true)
+    setErrorMessage('')
+
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Server returned ${response.status}`)
+      }
+
+      trackEvent('generate_lead', {
+        method: 'email',
+        configuration: formData.interest || 'unspecified',
+      })
+      setSubmittedMethod('email')
+      setSubmitted(true)
+    } catch {
+      // Graceful fallback: launch client mailto with prefilled lead details
+      const subject = `Enquiry: Jayabheri The Pinnacle (${formData.interest || 'Residence'}) - ${formData.name}`
+      const body = buildLeadMessage()
+      window.location.href = emailLink(subject, body)
+
+      trackEvent('generate_lead', {
+        method: 'email_mailto_fallback',
+        configuration: formData.interest || 'unspecified',
+      })
+      setSubmittedMethod('email')
+      setSubmitted(true)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  // Handle WhatsApp routing
+  const handleWhatsAppSubmit = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (!formData.name || !formData.phone) {
+      setErrorMessage('Please enter at least your name and phone number for WhatsApp enquiry.')
+      return
+    }
+
+    const message = buildLeadMessage()
     trackEvent('generate_lead', {
       method: 'whatsapp',
       configuration: formData.interest || 'unspecified',
     })
     window.open(whatsappLink(message), '_blank', 'noopener,noreferrer')
-
+    setSubmittedMethod('whatsapp')
     setSubmitted(true)
   }
 
@@ -75,13 +136,21 @@ export default function CTASection() {
             </button>
           </div>
 
-          <div className="cta-fade mt-16">
+          <div className="cta-fade mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
             <a
               href={`tel:${PHONE_TEL}`}
               onClick={() => trackEvent('contact_call', { location: 'cta_section' })}
               className="font-sans text-xs tracking-[0.2em] text-ivory/40 hover:text-bronze-light transition-colors"
             >
-              OR CALL {PHONE_DISPLAY}
+              CALL {PHONE_DISPLAY}
+            </a>
+            <span className="text-ivory/20 text-xs hidden sm:inline">·</span>
+            <a
+              href={`mailto:${EMAIL_ADDRESS}`}
+              onClick={() => trackEvent('contact_email', { location: 'cta_section' })}
+              className="font-sans text-xs tracking-[0.2em] text-ivory/40 hover:text-bronze-light transition-colors"
+            >
+              EMAIL {EMAIL_DISPLAY}
             </a>
           </div>
         </div>
@@ -93,7 +162,7 @@ export default function CTASection() {
         className="fixed inset-0 z-[9999] hidden flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-md transition-all duration-300"
         onClick={(e) => e.target === e.currentTarget && closeModal()}
       >
-        <div className="relative w-full max-w-lg bg-[#161614]/92 backdrop-blur-2xl border border-[rgba(201,169,110,0.3)] p-8 sm:p-10 lg:p-12 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_50px_rgba(154,123,79,0.12)] rounded-sm overflow-hidden text-ivory animate-modal-in">
+        <div className="relative w-full max-w-lg bg-[#161614]/95 backdrop-blur-2xl border border-[rgba(201,169,110,0.3)] p-8 sm:p-10 shadow-[0_25px_70px_rgba(0,0,0,0.9),0_0_50px_rgba(154,123,79,0.12)] rounded-sm overflow-hidden text-ivory animate-modal-in max-h-[92vh] overflow-y-auto">
           
           {/* Top golden accent line */}
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-bronze-light to-transparent" />
@@ -114,15 +183,30 @@ export default function CTASection() {
           </button>
 
           {submitted ? (
-            <div className="text-center py-12">
+            <div className="text-center py-10">
               <div className="w-12 h-px bg-bronze mx-auto mb-6" />
-              <h3 className="font-serif text-3xl text-ivory mb-3">Thank you.</h3>
-              <p className="font-sans text-sm text-ivory/60 font-light leading-relaxed max-w-xs mx-auto">
-                Our residential concierge specialist will contact you shortly to arrange your private viewing.
+              <h3 className="font-serif text-3xl text-ivory mb-3">Thank you, {formData.name || 'Valued Guest'}.</h3>
+              <p className="font-sans text-sm text-ivory/70 font-light leading-relaxed max-w-sm mx-auto mb-6">
+                {submittedMethod === 'email' ? (
+                  <>
+                    Your enquiry has been delivered directly to our sales concierge at <span className="text-bronze-light">{EMAIL_DISPLAY}</span>. 
+                    A confirmation has also been dispatched to your email.
+                  </>
+                ) : (
+                  <>
+                    Your WhatsApp enquiry has been initialized. Our residential specialist will respond promptly.
+                  </>
+                )}
               </p>
+              <button
+                onClick={closeModal}
+                className="btn-bronze !py-3 !px-8 text-xs tracking-[0.2em]"
+              >
+                CLOSE WINDOW
+              </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleEmailSubmit} className="flex flex-col gap-5">
               <div>
                 <span className="font-sans text-[9px] tracking-[0.35em] text-bronze-light uppercase block mb-2 font-medium">
                   JAYABHERI THE PINNACLE
@@ -134,10 +218,16 @@ export default function CTASection() {
                   Request pricing, bespoke floor plans, and VIP site tour.
                 </p>
               </div>
+
+              {errorMessage && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-200 text-xs px-3 py-2 rounded">
+                  {errorMessage}
+                </div>
+              )}
               
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 <label className="font-sans text-[10px] tracking-[0.2em] text-bronze-light/80 uppercase font-medium">
-                  FULL NAME
+                  FULL NAME *
                 </label>
                 <input
                   required
@@ -145,13 +235,13 @@ export default function CTASection() {
                   value={formData.name}
                   onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                   placeholder="Your Full Name"
-                  className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2.5 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 placeholder:text-ivory/25 rounded-t-sm"
+                  className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 placeholder:text-ivory/25 rounded-t-sm"
                 />
               </div>
               
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 <label className="font-sans text-[10px] tracking-[0.2em] text-bronze-light/80 uppercase font-medium">
-                  EMAIL ADDRESS
+                  EMAIL ADDRESS *
                 </label>
                 <input
                   required
@@ -159,13 +249,13 @@ export default function CTASection() {
                   value={formData.email}
                   onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   placeholder="name@company.com"
-                  className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2.5 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 placeholder:text-ivory/25 rounded-t-sm"
+                  className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 placeholder:text-ivory/25 rounded-t-sm"
                 />
               </div>
               
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 <label className="font-sans text-[10px] tracking-[0.2em] text-bronze-light/80 uppercase font-medium">
-                  PHONE NUMBER
+                  PHONE NUMBER *
                 </label>
                 <input
                   required
@@ -173,22 +263,21 @@ export default function CTASection() {
                   value={formData.phone}
                   onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                   placeholder="+91 98765 43210"
-                  className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2.5 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 placeholder:text-ivory/25 rounded-t-sm"
+                  className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 placeholder:text-ivory/25 rounded-t-sm"
                 />
               </div>
               
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 <label className="font-sans text-[10px] tracking-[0.2em] text-bronze-light/80 uppercase font-medium">
                   INTERESTED CONFIGURATION
                 </label>
                 <div className="relative">
                   <select
-                    required
                     value={formData.interest}
                     onChange={(e) => setFormData(prev => ({ ...prev, interest: e.target.value }))}
-                    className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2.5 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 [&>option]:bg-[#181816] rounded-t-sm appearance-none cursor-pointer"
+                    className="w-full bg-white/[0.04] border-b border-ivory/20 px-3.5 py-2 text-ivory text-sm outline-none focus:border-bronze-light focus:bg-white/[0.08] transition-all duration-300 [&>option]:bg-[#181816] rounded-t-sm appearance-none cursor-pointer"
                   >
-                    <option value="">Select Configuration</option>
+                    <option value="">Select Configuration (Optional)</option>
                     <option value="2BHK">2 BHK — 2,692 sq ft</option>
                     <option value="3.5BHK">3.5 BHK — 3,587–3,678 sq ft</option>
                     <option value="4.5BHK">4.5 BHK — 4,545–4,622 sq ft</option>
@@ -200,17 +289,39 @@ export default function CTASection() {
                   </div>
                 </div>
               </div>
-              
-              <button 
-                type="submit" 
-                className="btn-bronze justify-center w-full !py-4 !text-xs tracking-[0.25em] shadow-[0_4px_25px_rgba(154,123,79,0.3)] hover:shadow-[0_4px_35px_rgba(201,169,110,0.5)] transition-all duration-300 mt-2 cursor-pointer"
-                data-magnetic
-              >
-                SUBMIT PRIVATE ENQUIRY
-              </button>
-              <p className="font-sans text-[10px] tracking-[0.1em] text-ivory/35 text-center -mt-1">
-                Opens WhatsApp to send your enquiry to our sales team.
-              </p>
+
+              {/* Action Buttons: Email Submission & WhatsApp Route */}
+              <div className="flex flex-col gap-2.5 mt-2">
+                <button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="btn-bronze justify-center w-full !py-3.5 !text-xs tracking-[0.25em] shadow-[0_4px_25px_rgba(154,123,79,0.3)] hover:shadow-[0_4px_35px_rgba(201,169,110,0.5)] transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  data-magnetic
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect width="20" height="16" x="2" y="4" rx="2"/>
+                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+                  </svg>
+                  {isSubmitting ? 'DELIVERING ENQUIRY...' : 'SUBMIT ENQUIRY VIA EMAIL'}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleWhatsAppSubmit}
+                  className="btn-outline justify-center w-full !py-3 !text-xs tracking-[0.2em] transition-all duration-300 flex items-center gap-2 cursor-pointer hover:border-bronze-light"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.04 2c-5.46 0-9.9 4.44-9.9 9.9 0 1.75.46 3.45 1.32 4.95L2 22l5.3-1.39a9.86 9.86 0 0 0 4.73 1.2h.01c5.46 0 9.9-4.44 9.9-9.9 0-2.64-1.03-5.13-2.9-7A9.82 9.82 0 0 0 12.04 2zm5.8 14.08c-.24.68-1.42 1.32-1.95 1.36-.5.05-1.13.24-3.66-.77-3.08-1.21-5.05-4.34-5.2-4.55-.15-.2-1.24-1.66-1.24-3.16 0-1.5.79-2.24 1.07-2.55.28-.3.61-.38.81-.38.2 0 .41 0 .58.01.19.01.44-.07.69.53.24.6.83 2.07.9 2.22.07.15.12.32.02.52-.1.2-.15.32-.3.5-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.3.76 1.25 1.63 2.02 1.12 1 2.07 1.31 2.37 1.46.3.15.47.13.65-.08.18-.2.75-.87.95-1.17.2-.3.4-.25.68-.15.28.1 1.76.83 2.06.98.3.15.5.22.58.35.07.13.07.73-.17 1.41z" />
+                  </svg>
+                  CONNECT ON WHATSAPP
+                </button>
+              </div>
+
+              <div className="border-t border-ivory/10 pt-3 text-center">
+                <p className="font-sans text-[10px] tracking-[0.1em] text-ivory/40">
+                  Concierge Desk: <a href={`mailto:${EMAIL_ADDRESS}`} className="text-bronze-light hover:underline">{EMAIL_DISPLAY}</a>
+                </p>
+              </div>
             </form>
           )}
         </div>
