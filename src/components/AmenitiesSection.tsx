@@ -35,7 +35,7 @@ export default function AmenitiesSection() {
   const currentImage = amenitiesList[hoverIndex]?.image || '/interior.png'
 
   return (
-    <section id="amenities" ref={sectionRef} className="relative bg-charcoal section-py border-t border-[rgba(154,123,79,0.1)]">
+    <section id="amenities" ref={sectionRef} className="relative bg-charcoal py-20 lg:py-28 border-t border-[rgba(154,123,79,0.1)]">
       
       {/* Background Image (Crossfades based on hover) */}
       <div className="absolute inset-0 w-full h-full opacity-30 lg:opacity-50 pointer-events-none transition-all duration-700">
@@ -52,7 +52,7 @@ export default function AmenitiesSection() {
       <div className="container-site relative z-10">
         
         {/* Header */}
-        <div className="mb-16 lg:mb-24 max-w-2xl">
+        <div className="mb-10 lg:mb-14 max-w-2xl">
           <span className="section-label">THE CLUBHOUSE</span>
           <h2 ref={titleRef} className="font-serif text-4xl md:text-5xl lg:text-6xl text-ivory">
             <span data-split>World-Class</span><br/>
@@ -64,40 +64,97 @@ export default function AmenitiesSection() {
           </p>
         </div>
 
-        {/* List */}
-        <div className="max-w-4xl">
-          <ul className="flex flex-col">
-            {amenitiesList.map((item, i) => (
-              <li 
-                key={i}
-                className="amenity-item group border-b border-[rgba(154,123,79,0.15)] last:border-0"
-                onMouseEnter={() => setHoverIndex(i)}
-              >
-                <div className={`py-6 lg:py-8 flex flex-col md:flex-row md:items-center justify-between gap-2 cursor-pointer transition-colors duration-500 px-4 -mx-4 rounded-sm ${
-                  hoverIndex === i ? 'bg-[rgba(154,123,79,0.08)]' : 'hover:bg-[rgba(154,123,79,0.03)]'
-                }`}>
-                  
-                  <div className="flex items-center gap-6">
-                    <span className={`font-sans text-[10px] w-6 transition-colors duration-300 ${
-                      hoverIndex === i ? 'text-bronze-light font-semibold' : 'text-bronze-light/50'
-                    }`}>
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <h3 className={`font-serif text-2xl lg:text-3xl transition-colors duration-500 ${
-                      hoverIndex === i ? 'text-bronze-light' : 'text-ivory/80 group-hover:text-bronze-light'
-                    }`}>
-                      {item.name}
-                    </h3>
-                  </div>
+        {/* 2-Column Amenities Layout (Cuts vertical space by over 60%) */}
+        <div className="w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 xl:gap-x-16 gap-y-10">
+            
+            {/* Column 1: The Clubhouse (7 Levels) */}
+            <div>
+              <div className="flex items-center gap-3 pb-4 mb-2 border-b border-bronze/30">
+                <span className="w-2 h-2 rounded-full bg-bronze-light" />
+                <h3 className="font-sans text-[11px] tracking-[0.3em] font-medium text-bronze-light uppercase">
+                  Clubhouse Amenities (7 Levels)
+                </h3>
+              </div>
+              <ul className="flex flex-col">
+                {amenitiesList.filter(item => item.category === 'THE CLUB').map((item) => {
+                  const globalIndex = amenitiesList.findIndex(a => a.name === item.name)
+                  const isHovered = hoverIndex === globalIndex
+                  return (
+                    <li
+                      key={item.name}
+                      className="amenity-item group border-b border-[rgba(154,123,79,0.12)] last:border-0"
+                      onMouseEnter={() => setHoverIndex(globalIndex)}
+                    >
+                      <div className={`py-3.5 lg:py-4 flex items-center justify-between gap-3 cursor-pointer transition-all duration-300 px-3 -mx-3 rounded-md ${
+                        isHovered ? 'bg-[rgba(154,123,79,0.12)] pl-4' : 'hover:bg-[rgba(154,123,79,0.04)]'
+                      }`}>
+                        <div className="flex items-center gap-4">
+                          <span className={`font-sans text-[11px] w-6 transition-colors duration-300 ${
+                            isHovered ? 'text-bronze-light font-semibold' : 'text-bronze-light/50'
+                          }`}>
+                            {String(globalIndex + 1).padStart(2, '0')}
+                          </span>
+                          <h4 className={`font-serif text-lg lg:text-xl transition-colors duration-300 ${
+                            isHovered ? 'text-bronze-light' : 'text-ivory/85 group-hover:text-bronze-light'
+                          }`}>
+                            {item.name}
+                          </h4>
+                        </div>
+                        <span className="font-sans text-[9px] tracking-[0.25em] text-ivory/30 group-hover:text-ivory/60 transition-colors shrink-0">
+                          {item.category}
+                        </span>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
 
-                  <span className="font-sans text-[9px] tracking-[0.3em] text-ivory/30 md:group-hover:text-ivory/60 transition-colors md:ml-0 ml-12">
-                    {item.category}
-                  </span>
-                  
-                </div>
-              </li>
-            ))}
-          </ul>
+            {/* Column 2: Tower-Level Spaces */}
+            <div>
+              <div className="flex items-center gap-3 pb-4 mb-2 border-b border-bronze/30">
+                <span className="w-2 h-2 rounded-full bg-bronze-light" />
+                <h3 className="font-sans text-[11px] tracking-[0.3em] font-medium text-bronze-light uppercase">
+                  Tower Community Spaces
+                </h3>
+              </div>
+              <ul className="flex flex-col">
+                {amenitiesList.filter(item => item.category === 'TOWER').map((item) => {
+                  const globalIndex = amenitiesList.findIndex(a => a.name === item.name)
+                  const isHovered = hoverIndex === globalIndex
+                  return (
+                    <li
+                      key={item.name}
+                      className="amenity-item group border-b border-[rgba(154,123,79,0.12)] last:border-0"
+                      onMouseEnter={() => setHoverIndex(globalIndex)}
+                    >
+                      <div className={`py-3.5 lg:py-4 flex items-center justify-between gap-3 cursor-pointer transition-all duration-300 px-3 -mx-3 rounded-md ${
+                        isHovered ? 'bg-[rgba(154,123,79,0.12)] pl-4' : 'hover:bg-[rgba(154,123,79,0.04)]'
+                      }`}>
+                        <div className="flex items-center gap-4">
+                          <span className={`font-sans text-[11px] w-6 transition-colors duration-300 ${
+                            isHovered ? 'text-bronze-light font-semibold' : 'text-bronze-light/50'
+                          }`}>
+                            {String(globalIndex + 1).padStart(2, '0')}
+                          </span>
+                          <h4 className={`font-serif text-lg lg:text-xl transition-colors duration-300 ${
+                            isHovered ? 'text-bronze-light' : 'text-ivory/85 group-hover:text-bronze-light'
+                          }`}>
+                            {item.name}
+                          </h4>
+                        </div>
+                        <span className="font-sans text-[9px] tracking-[0.25em] text-ivory/30 group-hover:text-ivory/60 transition-colors shrink-0">
+                          {item.category}
+                        </span>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+
+          </div>
         </div>
         
       </div>

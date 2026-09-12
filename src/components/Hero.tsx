@@ -9,7 +9,7 @@ export default function Hero() {
   const line1Ref = useRef<HTMLSpanElement>(null)
   const line2Ref = useRef<HTMLSpanElement>(null)
   const line3Ref = useRef<HTMLSpanElement>(null)
-  const subRef = useRef<HTMLDivElement>(null)
+  const subRef = useRef<HTMLParagraphElement>(null)
   const ctaRef = useRef<HTMLDivElement>(null)
   const scrollRef = useRef<HTMLDivElement>(null)
   const prefersReduced = useReducedMotion()
@@ -26,12 +26,14 @@ export default function Hero() {
 
     // 2 — Letter-by-letter anime.js animation
     const runText = () => {
-      const line1Chars = line1Ref.current?.querySelectorAll<HTMLElement>('.split-char') ?? []
-      const line2Chars = line2Ref.current?.querySelectorAll<HTMLElement>('.split-char') ?? []
-      const line3Chars = line3Ref.current?.querySelectorAll<HTMLElement>('.split-char') ?? []
+      if (!line1Ref.current || !line2Ref.current || !line3Ref.current) return
+
+      const line1Chars = Array.from(line1Ref.current.querySelectorAll<HTMLElement>('.split-char'))
+      const line2Chars = Array.from(line2Ref.current.querySelectorAll<HTMLElement>('.split-char'))
+      const line3Chars = Array.from(line3Ref.current.querySelectorAll<HTMLElement>('.split-char'))
 
       if (reduce) {
-        ;[...line1Chars, ...line2Chars, ...line3Chars].forEach(el => {
+        [...line1Chars, ...line2Chars, ...line3Chars].forEach(el => {
           el.style.opacity = '1'
           el.style.transform = 'none'
         })
@@ -120,7 +122,7 @@ export default function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative h-screen min-h-[640px] flex flex-col justify-end overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-end overflow-hidden pt-28 sm:pt-32 lg:pt-36"
       aria-label="Jayabheri The Pinnacle — Hero"
     >
       {/* ── Background image ── */}
@@ -153,12 +155,12 @@ export default function Hero() {
         />
       </div>
 
-      {/* ── Hero text — bottom-left anchored ── */}
-      <div className="relative z-10 container-site pb-20 lg:pb-28 xl:pb-32">
+      {/* ── Hero text — bottom-left anchored with safe navbar clearance ── */}
+      <div className="relative z-10 container-site pb-14 sm:pb-16 lg:pb-24 xl:pb-28">
 
         {/* Location chip */}
         <p
-          className="font-sans text-[10px] tracking-[0.45em] font-light mb-8 lg:mb-10"
+          className="font-sans text-[10px] tracking-[0.45em] font-light mb-4 lg:mb-6"
           style={{ color: 'rgba(201,169,110,0.7)', opacity: 0 }}
           ref={subRef}
         >

@@ -36,24 +36,31 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
         scrolled
-          ? 'bg-charcoal/95 backdrop-blur-md py-4 border-[rgba(154,123,79,0.1)]'
-          : 'bg-transparent py-8 lg:py-10 border-transparent'
+          ? 'bg-charcoal/95 backdrop-blur-md py-4 border-[rgba(154,123,79,0.1)] shadow-xl'
+          : 'bg-gradient-to-b from-charcoal/90 via-charcoal/50 to-transparent backdrop-blur-[2px] py-4 lg:py-4 border-transparent'
       }`}
     >
       <div className="container-site flex items-center justify-between">
         
         {/* Brand */}
         <div 
-          className="cursor-pointer group flex flex-col"
+          className="cursor-pointer group flex items-center gap-3.5"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           data-magnetic
         >
-          <span className="font-serif text-2xl lg:text-3xl tracking-[0.15em] text-ivory transition-colors group-hover:text-bronze-light">
-            JAYABHERI
-          </span>
-          <span className={`font-sans text-[8px] tracking-[0.4em] transition-opacity duration-300 ${scrolled ? 'opacity-0 h-0' : 'opacity-100 text-ivory/60 mt-1'}`}>
-            THE PINNACLE
-          </span>
+          <img 
+            src="/favicon.svg" 
+            alt="Jayabheri The Pinnacle Logo" 
+            className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl shadow-md transition-transform duration-300 group-hover:scale-105"
+          />
+          <div className="flex flex-col">
+            <span className="font-serif text-2xl lg:text-3xl tracking-[0.15em] text-ivory transition-colors group-hover:text-bronze-light">
+              JAYABHERI
+            </span>
+            <span className={`font-sans text-[8px] tracking-[0.4em] transition-all duration-300 ${scrolled ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100 text-ivory/60 mt-0.5'}`}>
+              THE PINNACLE
+            </span>
+          </div>
         </div>
 
         {/* Desktop Nav */}
