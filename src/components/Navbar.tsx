@@ -34,10 +34,10 @@ export default function Navbar() {
   return (
     <>
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? 'bg-charcoal/95 backdrop-blur-md py-4 border-[rgba(154,123,79,0.1)] shadow-xl'
-          : 'bg-gradient-to-b from-charcoal/90 via-charcoal/50 to-transparent backdrop-blur-[2px] py-4 lg:py-4 border-transparent'
+          ? 'bg-charcoal/95 backdrop-blur-md py-4 shadow-xl'
+          : 'bg-gradient-to-b from-charcoal/90 via-charcoal/50 to-transparent backdrop-blur-[2px] py-4 lg:py-4'
       }`}
     >
       <div className="container-site flex items-center justify-between">
